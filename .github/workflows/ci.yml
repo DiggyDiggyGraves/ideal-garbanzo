@@ -1,0 +1,38 @@
+# Hardened CI workflow
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+# Principle of least privilege for GITHUB_TOKEN
+permissions:
+  contents: read
+
+# Avoid wasting CI minutes on duplicate runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run a one-line script
+        run: |
+          set -euo pipefail
+          echo Hello, world!
+
+      - name: Run a multi-line script
+        run: |
+          set -euo pipefail
+          echo Add other actions to build,
+          echo test, and deploy your project.
